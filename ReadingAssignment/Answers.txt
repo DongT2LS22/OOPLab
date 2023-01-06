@@ -1,0 +1,72 @@
+-------------------------------------------------------------------------------
+If you create a constructor method to build a DVD by title then create a 
+constructor method to build a DVD by category. Does JAVA allow you to do this?
+-------------------------------------------------------------------------------
+Answer:
++ constructor method to build a DVD by title:
+public DigitalVideoDisc(String title) {
+	this.title = title;
+}
+
+==> A method Signature = DigitalVideoDisc + String
+
++ constructor method to build a DVD by category
+public DigitalVideoDisc(String category) {
+	this.category = category;
+}
+
+==> A method Signature = DigitalVideoDisc + String
+
+
+=> So, because two constructors are same signature, bug is happend.
+JAVA don't allow to do this.
+
+
+-------------------------------------------------------------------------------
+ReadingAssignment: When should accessor be used?
+-------------------------------------------------------------------------------
+
+When I want to protect data of objects, I encapsulation its. Accessor is getter
+and setter. Its helps you get data of an object, update data of an object.
+
+Is JAVA a Pass by Value or a Pass by Reference programming language?
+Java is always Pass by Value and not pass by reference, we can prove it with a simple example. Let's say we have a class Balloon like below. And we have a simple program with a generic method to swap two objects, the class looks like below
+
+After the call of swap(jungleDVD, cinderellaDVD) why does the title of these two objects still remain? 
+bởi ở trong hàm swap dòng Object tmp = o1 đã tạo ra biến tmp có trùng địa chỉ với o1
+còn 2 dòng sau thì o1 và o2 sẽ không thể thay đổi được địa chỉ của chúng sang địa chỉ mới được nên kết quả title của chúng vẫn sẽ như cũ 
+
+After the call of changeTitle(jungleDVD, cinderellaDVD.getTitle()) why is the title of the JungleDVD changed? 
+Bởi vì dòng code dvd = new DigitalVideoDisc(oldTitle) sẽ làm cho dvd thay đổi địa chỉ của nó nên nó sẽ được tham chiếu đến vùng địa chỉ mới trên ô nhớ và sẽ thay đổi nội dung của nó theo nội dung trên ô nhớ mới
+
+
+When overriding the equals() method of the Object class, you will have to cast the Object parameter 1 to the type of object that you are dealing with. For example, in the Media class, you must cast the Object obj to a Media, and then check the equality of the two objects’ attributes as the above requirements (i.e. title for Media; title and length for Track). If the passing object is not an instance of Media, what happens?
+→ If the passing object is not an instance of Media, error will happen when we try to cast obj to Media type.
+
+Alternatively, to compare items in the cart, instead of using Comparator, we can use the Comparable interface and override the compareTo() method. Suppose we are taking this Comparable interface approach.
+
+What class should implement the Comparable interface?
+→ Media and Track class
+In those classes, how should you implement the compareTo() method be to reflect the ordering that we want?
+public abstract class Media implements Comparable<Media>
+...
+@Override
+// Compare cost first, then title
+public int compareTo(Media media) {
+    return Comparator.comparing(Media::getCost)
+            .thenComparing(Media::getTitle)
+            .compare(this, media);
+}
+// The same goes for Track class
+Can we have two ordering rules of the item (by title then cost and by cost then title) if we use this Comparable interface approach?
+→ When using Comparable interface approach, we can't have 2 ordering rules at the same time. We can only have one ordering rule which is defined in the compareTo() function.
+Suppose the DVDs has a different ordering rule from the other media types, that is by title, then decreasing length, then cost. How would you modify your code to allow this?
+→ We can override the compareTo() method in DigitalVideoDisc class
+@Override
+public int compareTo(Media media) {
+    DigitalVideoDisc dvd = (DigitalVideoDisc) media;
+    return Comparator.comparing(DigitalVideoDisc::getTitle)
+            .thenComparing(DigitalVideoDisc::getLength, Comparator.reverseOrder())
+            .thenComparing(DigitalVideoDisc::getCost)
+            .compare(this, dvd);
+}
